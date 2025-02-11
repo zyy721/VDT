@@ -81,7 +81,7 @@
             "name": "dit_infer_occ",
             "type": "debugpy",
             "request": "launch",
-            "program": "custom_sample.py",
+            "program": "custom_infer_occ.py",
 
             "python": "/home/yzhu/anaconda3/envs/dojo/bin/python",
             "console": "integratedTerminal",
@@ -95,9 +95,32 @@
             "args": [
                 "--image-size", "512", 
                 "--seed", "1",
-                "--ckpt", "results/000-DiT-XL-2/checkpoints/0000001.pt",
+                "--ckpt", "results/000-VDT-S-2/checkpoints/0000001.pt",
                 "--num-sampling-steps", "20",
             ]
+        },
+
+        {
+            "name": "vdt_infer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "custom_infer.py",
+
+            "python": "/home/yzhu/anaconda3/envs/dojo/bin/python",
+            "console": "integratedTerminal",
+            // "module": "torch.distributed.run",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0", // "0,1,2,3",
+                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
+            },
+
+            // "args": [
+            //     "--image-size", "512", 
+            //     "--seed", "1",
+            //     "--ckpt", "results/000-DiT-XL-2/checkpoints/0000001.pt",
+            //     "--num-sampling-steps", "20",
+            // ]
         },
 
         {

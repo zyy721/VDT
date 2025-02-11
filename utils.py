@@ -303,6 +303,27 @@ def interpolate_pos_embed(pos_embed_checkpoint, visual_encoder):
         return pos_embed_checkpoint
 
 
+def custom_load_checkpoint(model, model_name):
+    # state_dict = torch.load(model_name, map_location='cpu')
+    checkpoint = torch.load(model_name, map_location='cpu')
+    if "ema" in checkpoint:  # supports checkpoints from train.py
+        state_dict = checkpoint["ema"]
+
+    state_dict['pos_embed'] = interpolate_pos_embed(state_dict['pos_embed'],model) 
+ 
+    for key in model.state_dict().keys():
+
+        if key in state_dict.keys():
+            if state_dict[key].shape!=model.state_dict()[key].shape:
+                print('state_dict[key].shape', key, state_dict[key].shape)
+                print('model.state_dict()[key].shape', key, model.state_dict()[key].shape)
+                del state_dict[key]
+    
+    msg = model.load_state_dict(state_dict,strict=False)
+    # print('load checkpoint from %s'%url_or_filename)  
+    return model,msg
+
+
 def load_checkpoint(model, model_name):
     state_dict = torch.load(model_name, map_location='cpu')
 
