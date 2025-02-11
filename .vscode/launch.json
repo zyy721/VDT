@@ -1,0 +1,173 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // "name": "Python: Current File",
+            // "type": "python",
+            // "request": "launch",
+            // "program": "${file}",
+            // "console": "integratedTerminal",
+            // "justMyCode": true
+
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "attach",
+            "port": 3345,
+            "host": "localhost",
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    // "localRoot": "${workspaceFolder}/challenge/llama_adapter_v2_multimodal7b",
+                    "remoteRoot": "."
+                }
+            ],
+            "justMyCode": false,
+
+        },
+
+        {
+            "name": "vae_train",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "train.py",
+
+            "python": "/home/yzhu/anaconda3/envs/llava/bin/python",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0", // "0,1,2,3",
+                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
+            },
+
+            "args": [
+                "--py-config", "config/custom_train_vae.py",
+                "--work-dir", "out/vqvae",
+            ]
+        },
+
+        {
+            "name": "dit_train_occ",
+            "type": "debugpy",
+            "request": "launch",
+            // "program": "custom_train.py",
+
+            "python": "/home/yzhu/anaconda3/envs/dojo/bin/python",
+            "console": "integratedTerminal",
+            "module": "torch.distributed.run",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0", // "0,1,2,3",
+                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
+            },
+
+            "args": [
+                // "--model", "DiT-XL/2",
+                // "--data-path", "out/vqvae",
+
+                "--nnodes=1", 
+                "--nproc_per_node=1",
+                "custom_train.py",
+                "--model", "VDT-S/2", 
+                "--data-path", "/harddisk/yzhu/imagenet-1k/val",
+                "--ckpt-every", "5000",
+
+            ]
+        },
+
+        {
+            "name": "dit_infer_occ",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "custom_sample.py",
+
+            "python": "/home/yzhu/anaconda3/envs/dojo/bin/python",
+            "console": "integratedTerminal",
+            // "module": "torch.distributed.run",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0", // "0,1,2,3",
+                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
+            },
+
+            "args": [
+                "--image-size", "512", 
+                "--seed", "1",
+                "--ckpt", "results/000-DiT-XL-2/checkpoints/0000001.pt",
+                "--num-sampling-steps", "20",
+            ]
+        },
+
+        {
+            "name": "dit_train",
+            "type": "debugpy",
+            "request": "launch",
+            // "program": "custom_train.py",
+
+            "python": "/home/yzhu/anaconda3/envs/dojo/bin/python",
+            "console": "integratedTerminal",
+            "module": "torch.distributed.run",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0", // "0,1,2,3",
+                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
+            },
+
+            "args": [
+                // "--model", "DiT-XL/2",
+                // "--data-path", "out/vqvae",
+
+                "--nnodes=1", 
+                "--nproc_per_node=1",
+                "train.py",
+                "--model", "DiT-XL/2", 
+                "--data-path", "/harddisk/yzhu/imagenet-1k/val",
+
+            ]
+        },
+
+        {
+            "name": "dit_infer",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "sample.py",
+
+            "python": "/home/yzhu/anaconda3/envs/dojo/bin/python",
+            "console": "integratedTerminal",
+            // "module": "torch.distributed.run",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0", // "0,1,2,3",
+                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
+            },
+
+            "args": [
+                "--image-size", "512", 
+                "--seed", "1",
+            ]
+        },
+
+        {
+            "name": "eval_metric_stp3",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "eval_metric_stp3.py",
+
+            "python": "/home/yzhu/anaconda3/envs/llava/bin/python",
+            "console": "integratedTerminal",
+            "justMyCode": false,
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0", // "0,1,2,3",
+                "PYTHONPATH": "${workspaceFolder}:${env:PYTHONPATH}",
+            },
+
+            "args": [
+                "--py-config", "config/custom_occworld.py",
+                "--work-dir", "out/occworld",
+            ]
+        },
+
+    ]
+}
